@@ -12,8 +12,8 @@ Codebook.md describes the used variables.
 
 Description of "run_analysis.R":
 
-1) Reads train and test data.
-2) Combines train and test data.
+1) Read train and test data.
+2) Combine train and test data.
 3) Locate mean() and std() variables and filter out all the other columns.
 4) Read labels and insert descriptive activity names.
 5) Create second dataset: first read subject numbers.
