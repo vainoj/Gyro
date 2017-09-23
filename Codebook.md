@@ -14,9 +14,5 @@ In the "run_analysis.R" activity for each measurement is added. The possible val
 5 STANDING
 6 LAYING
 
-For creating the second dataset in the project, subject number for each measurement is added temporarily to the dataset. This way we can calculate averages based on the subject number.
-
-Also, for creating the second dataset filtering was done based on activities.
-
-This results in total 36 rows for the second dataset (for 6 activities and 30 subjects).
+For creating the second dataset in the project, we calculate average for each pair of activity and subject. This gives 30*6 = 180 datalines.
 

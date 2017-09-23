@@ -17,8 +17,7 @@ Description of "run_analysis.R":
 3) Locate mean() and std() variables and filter out all the other columns.
 4) Read labels and insert descriptive activity names.
 5) Create second dataset: first read subject numbers.
-6) Then calculate averages for activities.
-7) Then calculate averages for subjects.
-8) Write output file "data2.txt".
+6) Then calculate averages for activities/subjects.
+7) Write output file "data2.txt".
 
 
