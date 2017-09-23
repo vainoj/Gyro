@@ -1,36 +1,15 @@
 #Combinig train and test data
 #Notice: assuming all data files are in the working directory.
 
-#Read train and test data
-processFile = function(filepath) {
-  con = file(filepath, "r")
-  ln <- 0
-  DF <- {}
-  while ( TRUE) {
-    line = readLines(con, n = 1)
-    if ( length(line) == 0 ) {
-      break
-    }
-    ln <- ln + 1
-    rawLine <- strsplit(line, " ")
-    df <- data.frame(matrix(unlist(rawLine)))
-    df2 <- df[!(df == "")]
-    df3 <- as.numeric(df2)
-    DF <- rbind(DF[1:ln-1,], df3)
-    print(ln)
-  }
-  
-  close(con)
-  return(DF)
-}
-
 
 fpath1 <- "X_train.txt"
 fpath2 <- "X_test.txt"
 
-resTrain <- processFile(fpath1)
-resTest <- processFile(fpath2)
+resTrain <- read.table(fpath1)
+resTest <- read.table(fpath2)
 
+resTrain <- apply(resTrain, 2, as.numeric)
+resTest <- apply(resTest, 2, as.numeric)
 #Combine train and test data
 resComb <- rbind(resTrain, resTest)
 
@@ -70,27 +49,38 @@ sTest <- read.csv("subject_test.txt", header = FALSE)
 vTemp <- c(sTrain$V1, sTest$V1)
 
 newDataset <- dfSelected
+newDataset <- cbind.data.frame(newDataset, vTemp)
+colnames(newDataset)[81] <- "Subject"
 
-#Calculate average for activities                               
-temp1 <- colMeans(newDataset[newDataset$Activity == "WALKING",1:79])
-temp2 <- colMeans(newDataset[newDataset$Activity == "WALKING_UPSTAIRS",1:79])
-temp3 <- colMeans(newDataset[newDataset$Activity == "WALKING_DOWNSTAIRS",1:79])
-temp4 <- colMeans(newDataset[newDataset$Activity == "SITTING",1:79])
-temp5 <- colMeans(newDataset[newDataset$Activity == "STANDING",1:79])
-temp6 <- colMeans(newDataset[newDataset$Activity == "LAYING",1:79])
 
-newDataset <- rbind.data.frame(temp1,temp2, temp3, temp4, temp5, temp6)
-
-#Calculate average for subjects
-for (s in (1:30)) {
-  temp <- colMeans(dfSelected[vTemp == s, 1:79])
-  newDataset <- rbind.data.frame(newDataset, temp)
+finalDataset <- newDataset
+count1 <- 0
+for (i in 1:30) {
+  for (j in 1:6) {
+    if (j == 1)
+      s <- "WALKING"
+    if (j == 2)
+      s <- "WALKING_UPSTAIRS"
+    if (j == 3)
+      s<- "WALKING_DOWNSTAIRS"
+    if (j == 4)
+      s <- "SITTING"
+    if (j == 5)
+      s <- "STANDING"
+    if (j ==6 ) 
+      s <- "LAYING"
+    #print(paste(i, " ",s))
+    count1 <- count1 + 1
+    finalDataset[count1,1:79] = colMeans(newDataset[newDataset$Activity == s & newDataset$Subject == i,1:79])
+    finalDataset[count1, 80] = s
+    finalDataset[count1, 81] = i
+    
+  }
 }
 
+#filter out extra lines
+finalDataset <- finalDataset[1:(30*6),]
 
-#Set row and col names for the second dataset
-row.names(newDataset) <- c("WALKING", "WALKING_UPSTAIRS", "WALKING_DOWNSTAIRS", "SITTING", "STANDING", "LAYING", paste("Subject ", 1:30))
-colnames(newDataset) <- features$V2[selectedFeatures]
 
 #Write output file for the second data set
-write.table(newDataset, file="data2.txt", row.names = FALSE)
+write.table(finalDataset, file="data2.txt", row.names = FALSE)
